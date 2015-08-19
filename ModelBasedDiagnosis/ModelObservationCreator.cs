@@ -211,7 +211,7 @@ namespace ModelBasedDiagnosis
 
             int id;
 
-            if(compArr[1].Length<5 || !compArr[1].StartsWith("Component"))
+            if(compArr[1].Length<5 || !compArr[1].StartsWith("gate"))
                 return null; //throw
 
             if(!Int32.TryParse(compArr[1].Substring(4),out id))

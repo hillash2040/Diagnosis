@@ -25,7 +25,7 @@ namespace ModelBasedDiagnosis
                 {
                     model = value;
                     model.SetValue(InputValues);
-
+                    SetCorrectValuesDictionary();
                 }
                 //else throw
             }
@@ -61,8 +61,8 @@ namespace ModelBasedDiagnosis
                     bool val = CorrectValues[wire];
                     if(wire.Value!=val)
                     {
-                        wire.Value = val;//with propogation
-                        //wire.ChangeValue(val);//no propogation
+                        //wire.Value = val;//with propogation
+                        wire.ChangeValue(val);//no propogation
                     }
                 }
             }

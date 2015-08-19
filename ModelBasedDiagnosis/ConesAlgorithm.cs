@@ -22,20 +22,20 @@ namespace ModelBasedDiagnosis
         {
             searchAlgorithm.resetGoodCompList();
         }
-        public List<double> CalcHelthState(List<Gate> components, List<Diagnosis> diagnoses)
-        {
-            return searchAlgorithm.CalcHelthState(components, diagnoses);
-        }
-        public void CalcDiagProb(List<Diagnosis> diagnoses)
-        {
-            searchAlgorithm.CalcDiagProb(diagnoses);
-        }
-        public List<Diagnosis> FindDiagnoses(Observation observation)
+        public DiagnosisSet FindDiagnoses(Observation observation)
         {
             if (searchAlgorithm == null || observation == null || observation.TheModel == null || observation.TheModel.Components == null || observation.TheModel.Components.Count == 0)
                 return null; //throw
-            List<Diagnosis> diagnoses = new List<Diagnosis>();
-            List<Diagnosis> abstractDiag = new List<Diagnosis>();
+            DiagnosisSet diagnoses;
+            DiagnosisSet abstractDiag;
+            abstractDiag = findAbstractDiag(observation);
+            diagnoses = abstractDiagGrounding(observation, abstractDiag);
+
+            return diagnoses;
+        }
+        private DiagnosisSet findAbstractDiag(Observation observation)
+        {
+            DiagnosisSet abstractDiag;
             if (observation.TheModel.cones.Count == 0)
                 observation.TheModel.createCones();
             List<Cone> cones = observation.TheModel.cones;
@@ -47,14 +47,20 @@ namespace ModelBasedDiagnosis
             Observation obs = new Observation(observation.Id, observation.InputValues, observation.OutputValues);
             obs.TheModel = toTest;
             abstractDiag = searchAlgorithm.FindDiagnoses(obs);
+            return abstractDiag;
+        }
+        private DiagnosisSet abstractDiagGrounding(Observation observation,DiagnosisSet abstractDiag)
+        {
             int count = 0;
-            Dictionary<int, List<Diagnosis>> coneDiagDic = new Dictionary<int, List<Diagnosis>>();
+            Observation obs;
+            DiagnosisSet diagnoses = new DiagnosisSet();
+            Dictionary<int, DiagnosisSet> coneDiagDic = new Dictionary<int, DiagnosisSet>();
             List<List<Gate>> tempDiag = new List<List<Gate>>();
             List<List<Gate>> temp = new List<List<Gate>>();
-            foreach (Diagnosis diag in abstractDiag)
+            foreach (Diagnosis diag in abstractDiag.Diagnoses)
             {
-                List<Gate> openList = diag.diagnosis;
-               // observation.TheModel.SetValue(observation.InputValues); 
+                List<Gate> openList = diag.TheDiagnosis;
+                // observation.TheModel.SetValue(observation.InputValues); 
                 observation.SetWiresToCorrectValue();
                 if (openList.Count == 0)
                     continue;
@@ -77,27 +83,27 @@ namespace ModelBasedDiagnosis
                 }
                 foreach (Cone c in openList) //X
                 {
-                    if (coneDiagDic[c.Id] == null || coneDiagDic[c.Id].Count == 0)
+                    if (coneDiagDic[c.Id] == null || coneDiagDic[c.Id].Diagnoses.Count == 0)
                         continue;
                     if (tempDiag.Count == 0)
                     {
-                        foreach (Diagnosis d in coneDiagDic[c.Id])
+                        foreach (Diagnosis d in coneDiagDic[c.Id].Diagnoses)
                         {
-                            tempDiag.Add(new List<Gate>(d.diagnosis));
+                            tempDiag.Add(new List<Gate>(d.TheDiagnosis));
                         }
                         continue;
                     }
-                    if (coneDiagDic[c.Id].Count == 1)
+                    if (coneDiagDic[c.Id].Diagnoses.Count == 1)
                     {
                         for (int i = 0; i < tempDiag.Count; i++)
-                            tempDiag[i].AddRange(new List<Gate>(coneDiagDic[c.Id][0].diagnosis));
+                            tempDiag[i].AddRange(new List<Gate>(coneDiagDic[c.Id].Diagnoses.First().TheDiagnosis));
                         continue;
                     }
                     temp.AddRange(tempDiag);
                     tempDiag.Clear();
-                    foreach (Diagnosis d in coneDiagDic[c.Id])
+                    foreach (Diagnosis d in coneDiagDic[c.Id].Diagnoses)
                     {
-                        List<Gate> listD =d.diagnosis;
+                        List<Gate> listD = d.TheDiagnosis;
                         foreach (List<Gate> listTemp in temp)
                         {
                             List<Gate> listTempD = new List<Gate>(listTemp);
@@ -110,16 +116,45 @@ namespace ModelBasedDiagnosis
                 }
                 foreach (List<Gate> list in tempDiag)
                 {
-                    diagnoses.Add(new Diagnosis(list));
+                    diagnoses.AddDiagnosis(new Diagnosis(list));
                 }
                 tempDiag.Clear();
             }
             return diagnoses;
         }
- 
         public bool Stop()//no use in this class
         {
             return false;
+        }
+        public void CheckMinCard(Observation observation, CSVExport myExport)
+        {
+            if (searchAlgorithm == null || observation == null || observation.TheModel == null || observation.TheModel.Components == null || observation.TheModel.Components.Count == 0)
+                return; //throw
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            DiagnosisSet diagnoses;
+            DiagnosisSet abstractDiag;
+            searchAlgorithm.agenda = SearchAlgorithm.Agenda.minCard;
+            abstractDiag = findAbstractDiag(observation);
+            string foundMC;
+            if (searchAlgorithm.FoundMinCard)
+                foundMC = "yes";
+            else
+                foundMC = "No";
+            TimeSpan firstMC = searchAlgorithm.FirstMinCard;
+            TimeSpan absDiagtime = stopwatch.Elapsed;
+            diagnoses = abstractDiagGrounding(observation, abstractDiag);
+            stopwatch.Stop();
+            TimeSpan alltime = stopwatch.Elapsed;
+            myExport.AddRow();
+            myExport["System"] = observation.TheModel.Id;
+            myExport["Observation"] = observation.Id;
+            myExport["All MC found?"] = foundMC;
+            myExport["# abstract diagnoses"] = abstractDiag.Count;
+            myExport["# diagnoses"] = diagnoses.Count;
+            myExport["runtime until 1st found"] = firstMC;
+            myExport["runtime abstract"] = absDiagtime;
+            myExport["runtime all"] = alltime;
         }
     }
 }

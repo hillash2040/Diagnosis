@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace ModelBasedDiagnosis
 {
-    interface IDiagnoser
+    class MDPNode
     {
-        DiagnosisSet FindDiagnoses(Observation observation);
+        public SystemState State;
+        public List<List<Gate>> Actions; // what we repaired so far
+        
     }
 }

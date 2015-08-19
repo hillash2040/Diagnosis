@@ -24,6 +24,8 @@ namespace ModelBasedDiagnosis
             Components = new List<Gate>();
             cones = new List<Cone>();
             Internal = new List<Wire>();
+            InputComponents = new List<Gate>();
+            OutputComponents = new List<Gate>();
         }
         public SystemModel(string id, Wire[] input, Wire[] output) :this(id)
         {
