@@ -44,13 +44,23 @@ namespace ModelBasedDiagnosis
             {
                 foreach (Gate comp in diag.TheDiagnosis)
                 {
-                    int i = Components.IndexOf(comp);
+                    int i = Components.IndexOf(comp); //check 
                     if (i >= 0 && i < compHS.Count)
                         compHS[i] += (diag.Probability / diagnoses.SetProbability);
                 }
             }
             CurrentHelthState = compHS;
             DiagnosesCounter = diagnoses.Count;
+        }
+
+        public double GetCompHealthState(Gate component)
+        {
+            if (component == null)
+                return 0;
+            int i = Components.IndexOf(component); //check 
+            if (i >= 0 && i < Count)
+                return CurrentHelthState[i];
+            return 0;
         }
     }
 }

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace ModelBasedDiagnosis
 {
-    abstract class BatchPlanner
+    abstract class RepairActionSearcher
     {
-        //public List<Gate> Plan(DiagnosisSet diagnoses);
-        public abstract List<Gate> Plan(SystemState state);
+       public abstract List<List<Gate>> ComputePossibleAcions(SystemState state,int k);
     }
 }

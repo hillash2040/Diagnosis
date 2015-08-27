@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 namespace ModelBasedDiagnosis
 {
-    class IterativeDeepening:SearchAlgorithm
+    class IterativeDeepening:DiagnosesSearcher
     {
         private List<Gate> openList;
         private List<Gate> notClosed;

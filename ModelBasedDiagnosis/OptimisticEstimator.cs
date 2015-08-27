@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ModelBasedDiagnosis
 {
-    class OptimisticEstimator:BatchFutureCostEstimator
+    class OptimisticEstimator:BatchCostEstimator
     {
         public OptimisticEstimator()
         {

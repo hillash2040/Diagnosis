@@ -42,11 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BatchPlanner.cs" />
+    <Compile Include="BDBatchPlanner.cs" />
     <Compile Include="Cone.cs" />
     <Compile Include="ConesAlgorithm.cs" />
     <Compile Include="CSVExport.cs" />
     <Compile Include="Diagnosis.cs" />
     <Compile Include="DiagnosisSet.cs" />
+    <Compile Include="EvalFunctionBatchPlanner.cs" />
     <Compile Include="Gate.cs" />
     <Compile Include="FlipFunction.cs" />
     <Compile Include="HelthStateVector.cs" />
@@ -54,18 +56,20 @@
     <Compile Include="IFunction.cs" />
     <Compile Include="IPrefixMatcher.cs" />
     <Compile Include="IterativeDeepening.cs" />
-    <Compile Include="MDP.cs" />
-    <Compile Include="MDPNode.cs" />
+    <Compile Include="KHPBatchPlanner.cs" />
     <Compile Include="MDPPlanner.cs" />
+    <Compile Include="MDPState.cs" />
     <Compile Include="ModelObservationCreator.cs" />
     <Compile Include="OptimisticEstimator.cs" />
     <Compile Include="PessimisticEstimator.cs" />
     <Compile Include="Planner.cs" />
+    <Compile Include="PowersetBasedSearcher.cs" />
     <Compile Include="PrefixMatcher.cs" />
-    <Compile Include="SearchAlgorithm.cs" />
+    <Compile Include="RepairActionSearcher.cs" />
+    <Compile Include="DiagnosesSearcher.cs" />
     <Compile Include="Simulator.cs" />
     <Compile Include="ICostEstimator.cs" />
-    <Compile Include="BatchFutureCostEstimator.cs" />
+    <Compile Include="BatchCostEstimator.cs" />
     <Compile Include="SystemModel.cs" />
     <Compile Include="MultipleInputGate.cs" />
     <Compile Include="Observation.cs" />
@@ -75,6 +79,7 @@
     <Compile Include="SystemState.cs" />
     <Compile Include="Trie.cs" />
     <Compile Include="TrieNode.cs" />
+    <Compile Include="UnionBasedSearcher.cs" />
     <Compile Include="Wire.cs" />
   </ItemGroup>
   <ItemGroup>

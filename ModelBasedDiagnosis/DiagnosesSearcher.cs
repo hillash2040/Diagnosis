@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ModelBasedDiagnosis
 {
-    abstract class SearchAlgorithm :IDiagnoser
+    abstract class DiagnosesSearcher :IDiagnoser
     {
         public IFunction function;
         protected Trie<string> trie;
@@ -21,17 +21,17 @@ namespace ModelBasedDiagnosis
         public Agenda agenda;
         public enum Agenda { findAllDiagnoses, minCard, helthState };
 
-        public SearchAlgorithm(IFunction function, TimeSpan timeSpan): this(function)
+        public DiagnosesSearcher(IFunction function, TimeSpan timeSpan): this(function)
         {
             x = timeSpan;
         }
-        public SearchAlgorithm(IFunction function)
+        public DiagnosesSearcher(IFunction function)
         {
             this.function = function;
             closed = new List<int>();
             x = new TimeSpan(0, 1, 0); 
         }
-        public SearchAlgorithm() :this(null)
+        public DiagnosesSearcher() :this(null)
         {}
         public void addToGoodCompList(int compID)
         {

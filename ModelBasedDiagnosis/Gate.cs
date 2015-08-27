@@ -55,5 +55,19 @@ namespace ModelBasedDiagnosis
             else
                 return -1;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is Gate)
+            {
+                Gate g = (Gate)obj;
+                if (g == null)
+                    return false;
+                if(g.Id == this.Id && g.type == this.type)
+                    return true;
+                return false;
+            }
+            else
+                return base.Equals(obj);
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace ModelBasedDiagnosis
 {
     class ConesAlgorithm:IDiagnoser
     {
-        private SearchAlgorithm searchAlgorithm;
-        public ConesAlgorithm(SearchAlgorithm searchAlgo)
+        private DiagnosesSearcher searchAlgorithm;
+        public ConesAlgorithm(DiagnosesSearcher searchAlgo)
         {
             searchAlgorithm = searchAlgo;
         }
@@ -134,7 +134,7 @@ namespace ModelBasedDiagnosis
             stopwatch.Start();
             DiagnosisSet diagnoses;
             DiagnosisSet abstractDiag;
-            searchAlgorithm.agenda = SearchAlgorithm.Agenda.minCard;
+            searchAlgorithm.agenda = DiagnosesSearcher.Agenda.minCard;
             abstractDiag = findAbstractDiag(observation);
             string foundMC;
             if (searchAlgorithm.FoundMinCard)

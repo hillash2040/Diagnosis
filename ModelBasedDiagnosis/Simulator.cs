@@ -22,13 +22,39 @@ namespace ModelBasedDiagnosis
         public Simulator(IDiagnoser Algorithm)
         {
             Diagnoser = Algorithm;
-            if (Diagnoser != null && Diagnoser is SearchAlgorithm)
+            if (Diagnoser != null && Diagnoser is DiagnosesSearcher)
             {
-                this.gateFunc = ((SearchAlgorithm)Diagnoser).function;
+                this.gateFunc = ((DiagnosesSearcher)Diagnoser).function;
             }
             else
                 this.gateFunc = new FlipFunction();
             MOCreator = new ModelObservationCreator();
+        }
+        private void createNewDiagnoser()
+        {
+            FlipFunction flip = new FlipFunction();
+            TimeSpan x = new TimeSpan(0, 1, 0);
+            IterativeDeepening salgo = new IterativeDeepening(flip, x);
+            ConesAlgorithm algo = new ConesAlgorithm(salgo);
+            this.Diagnoser = algo;
+        }
+        public void temp(string fileModel, string fileObs, string fileReal)
+        {
+            createNewDiagnoser();
+            RepairActionSearcher ras = new PowersetBasedSearcher();
+            BatchCostEstimator bce = new PessimisticEstimator();
+            MDPPlanner planner = new MDPPlanner(ras, bce, 2);
+            List<Observation> observationsList = MOCreator.ReadObsModelFiles(fileModel, fileObs);
+            Dictionary<int, List<int>> obsReal = MOCreator.ReadRealObsFiles(fileReal);
+            if (observationsList == null || observationsList.Count == 0 || obsReal == null || obsReal.Count == 0)
+                return;
+            Observation obs = observationsList[0];
+            List<int> realComp = new List<int>(obsReal[obs.Id]);
+            DiagnosisSet diagnoses = Diagnoser.FindDiagnoses(obs);
+            SystemState state = new SystemState(obs.TheModel.Components);
+            state.Diagnoses = diagnoses;
+            List<Gate> repairAction = planner.Plan(state);
+
         }
         public void HS(string fileName1, string fileName2)
         {
@@ -41,7 +67,7 @@ namespace ModelBasedDiagnosis
             ConesAlgorithm algo = new ConesAlgorithm(salgo);
             Stopwatch stopwtch = new Stopwatch();
             CSVExport myExport = new CSVExport();
-            salgo.agenda = SearchAlgorithm.Agenda.helthState;
+            salgo.agenda = DiagnosesSearcher.Agenda.helthState;
             foreach (Observation obs in observationsList)
             {
                 stopwtch.Start();

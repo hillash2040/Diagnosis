@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace ModelBasedDiagnosis
 {
-    class MDPNode
+    interface ICostEstimator
     {
-        public SystemState State;
-        public List<List<Gate>> Actions; // what we repaired so far
-        
+        double RepairActionCost(List<Gate> repairAction, SystemState state);
+        double StateCost(SystemState state);
     }
 }
